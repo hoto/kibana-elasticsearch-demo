@@ -1,26 +1,30 @@
 version: '3.7'
 
 services:
- 
-  kibana: 
+
+  kibana:
     image: docker.elastic.co/kibana/kibana:7.0.0
     ports:
       - target: 5601
         published: 5601
-    environment: 
-      SERVER_NAME: localhost:5601
+    environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.0.0
     ports:
-    - target: 9200
-      published: 9200
-    environment: 
+      - target: 9200
+        published: 9200
+    environment:
       discovery.type: single-node
+      bootstrap.memory_lock: 'true'
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     volumes:
-    - esdata:/usr/share/elasticsearch/data
+      - esdata:/usr/share/elasticsearch/data
 
 volumes:
   esdata:
